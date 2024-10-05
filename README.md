@@ -18,10 +18,6 @@ MVMZ 의 데이터가 기록된 JSON 파일의 문자열을 보기좋게 다듬�
 
 <p># &nbsp; &nbsp; &nbsp;: 보다 온전한 수정을 위해 base_modifications 를 별도로 분리하였습니다.</p>
 
-<p># &nbsp; &nbsp; &nbsp;: 정규식의 추가를 통해 특정 라인에 대한 수정을 제외시키려 하였으나</p>
-
-<p># &nbsp; &nbsp; &nbsp;: 굳이 기능을 넣어도 쓸 일이 없겠다는 생각에 중단하였습니다.</p>
-
 <p># &nbsp; &nbsp; &nbsp;: MK1 : plugins.js에 대하여 오직 name만을 기준으로 정리합니다.</p>
 
 <p># &nbsp; &nbsp; &nbsp;: MK2 : Plugins.js에 대하여 parameters를 기준으로 추가정리합니다.</p>
