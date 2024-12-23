@@ -1,11 +1,13 @@
-TEMP { Version : 0000-00-00 }
-KIRIKIRI2 { Version : 2024-12-09 }
-TYRANO { Version : 2024-11-27 }
-MVMZ_ALL { Version : 2024-08-21 }
-MVMZ_JP { Version : 2024-12-23 }
-MVMZ-MT { Version : 2024-12-16 }
-VXVXA { Version : 2024-12-17 }
-Wolf { Version : 2024-12-18 }
-PGMMV { Version : 2024-10-03 }
-GameMaker { Version : 2024-09-05 }
-LIGHTVN { Version : 2024-12-10 }
+{
+  TEMP { Version : 0000-00-00 },
+  KIRIKIRI2 { Version : 2024-12-09 },
+  TYRANO { Version : 2024-11-27 },
+  MVMZ_ALL { Version : 2024-08-21 },
+  MVMZ_JP { Version : 2024-12-23 },
+  MVMZ-MT { Version : 2024-12-16 },
+  VXVXA { Version : 2024-12-17 },
+  Wolf { Version : 2024-12-18 },
+  PGMMV { Version : 2024-10-03 },
+  GameMaker { Version : 2024-09-05 },
+  LIGHTVN { Version : 2024-12-10 }
+}
