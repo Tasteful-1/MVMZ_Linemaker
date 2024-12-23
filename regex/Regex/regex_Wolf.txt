@@ -1,0 +1,3 @@
+CURRENT_VERSION = 2024-12-18
+
+txt_raw_modified : ^(?!.*\.(png|jpg|mps|wav|ogg|csv|txt)$).+$

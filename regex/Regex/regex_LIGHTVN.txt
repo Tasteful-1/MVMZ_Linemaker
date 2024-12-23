@@ -1,0 +1,3 @@
+CURRENT_VERSION = 2024-12-10
+
+dialog : ^＠.*」$
