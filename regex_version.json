@@ -1,13 +1,46 @@
 {
-  "TEMP" : { "Version" : "0000-00-00" },
-  "KIRIKIRI2" : { "Version" : "2024-12-09" },
-  "TYRANO" : { "Version" : "2024-11-27" },
-  "MVMZ_ALL" : { "Version" : "2024-08-21" },
-  "MVMZ_JP" : { "Version" : "2024-12-23" },
-  "MVMZ-MT" : { "Version" : "2024-12-16" },
-  "VXVXA" : { "Version" : "2024-12-17" },
-  "Wolf" : { "Version" : "2024-12-18" },
-  "PGMMV" : { "Version" : "2024-10-03" },
-  "GameMaker" : { "Version" : "2024-09-05" },
-  "LIGHTVN" : { "Version" : "2024-12-10" }
+	"TEMP": {
+		"latest_version": "0000-00-00",
+		"regex_url": "example"
+	},
+	"KIRIKIRI2": {
+		"latest_version": "2024-12-09",
+		"regex_url": "example"
+	},
+	"TYRANO": {
+		"latest_version": "2024-11-27",
+		"regex_url": "example"
+	},
+	"MVMZ_ALL": {
+		"latest_version": "2024-08-21",
+		"regex_url": "example"
+	},
+	"MVMZ_JP": {
+		"latest_version": "2024-12-23",
+		"regex_url": "example"
+	},
+	"MVMZ-MT": {
+		"latest_version": "2024-12-16",
+		"regex_url": "example"
+	},
+	"VXVXA": {
+		"latest_version": "2024-12-17",
+		"regex_url": "example"
+	},
+	"Wolf": {
+		"latest_version": "2024-12-18",
+		"regex_url": "example"
+	},
+	"PGMMV": {
+		"latest_version": "2024-10-03",
+		"regex_url": "example"
+	},
+	"GameMaker": {
+		"latest_version": "2024-09-05",
+		"regex_url": "example"
+	},
+	"LIGHTVN": {
+		"latest_version": "2024-12-10",
+		"regex_url": "example"
+	}
 }
