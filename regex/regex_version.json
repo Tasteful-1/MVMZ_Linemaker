@@ -12,11 +12,11 @@
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_TYRANO.txt"
 	},
 	"MVMZ_ALL": {
-		"latest_version": "2024-08-21",
+		"latest_version": "2024-08-23",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-ALL.txt"
 	},
 	"MVMZ_JP": {
-		"latest_version": "2024-12-23",
+		"latest_version": "2024-12-26",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-JP.txt"
 	},
 	"MVMZ-MT": {
@@ -28,7 +28,7 @@
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_VXVXA.txt"
 	},
 	"Wolf": {
-		"latest_version": "2024-12-18",
+		"latest_version": "2024-12-26",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_Wolf.txt"
 	},
 	"PGMMV": {
@@ -40,7 +40,7 @@
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_GameMaker.txt"
 	},
 	"LIGHTVN": {
-		"latest_version": "2024-12-10",
+		"latest_version": "2024-12-23",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_LIGHTVN.txt"
 	}
 }
