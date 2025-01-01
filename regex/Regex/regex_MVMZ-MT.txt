@@ -1,4 +1,4 @@
-CURRENT_VERSION = 2024-12-16
+CURRENT_VERSION = 2024-12-30
 
 //MEMO_JP
 dtext_JP : ^★:<dText\s*:\s*.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
