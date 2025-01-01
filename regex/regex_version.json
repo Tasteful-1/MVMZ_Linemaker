@@ -16,11 +16,11 @@
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-ALL.txt"
 	},
 	"MVMZ_JP": {
-		"latest_version": "2024-12-26",
+		"latest_version": "2025-01-01",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-JP.txt"
 	},
 	"MVMZ-MT": {
-		"latest_version": "2024-12-16",
+		"latest_version": "2024-12-30",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-MT.txt"
 	},
 	"VXVXA": {
@@ -28,7 +28,7 @@
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_VXVXA.txt"
 	},
 	"Wolf": {
-		"latest_version": "2024-12-26",
+		"latest_version": "2025-01-01",
 		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_Wolf.txt"
 	},
 	"PGMMV": {
