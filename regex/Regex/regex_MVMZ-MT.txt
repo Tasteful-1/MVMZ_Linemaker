@@ -8,11 +8,12 @@ desc2_JP : ^★:<desc2\s*:\s*.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
 desc3_JP : ^★:<desc3\s*:\s*.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
 
 //MEMO_ALL
-dtext_all : ^★:<dText\s*:\s*.*(.*?).*$
-dtext_all_desc : ^(?!★:<).*1:\s*.*(.*?).*$
-desc1_all : ^★:<desc1\s*:\s*.*(.*?).*$
-desc2_all : ^★:<desc2\s*:\s*.*(.*?).*$
-desc3_all : ^★:<desc3\s*:\s*.*(.*?).*$
+dtext_all 콜론 ^★:<dText\s*:\s*.*(.*?).*$
+dtext_all_desc 콜론 ^(?!★:<).*★:\s*.*(.*?).*$
+
+desc1_all 콜론 ^★:<desc1\s*:\s*.*(.*?).*$
+desc2_all 콜론 ^★:<desc2\s*:\s*.*(.*?).*$
+desc3_all 콜론 ^★:<desc3\s*:\s*.*(.*?).*$
 
 //Comment
 choicehelp_part : ^★:%&%>\s*.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
@@ -20,7 +21,7 @@ namepop : ^★:<namePop:\s*.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*>\s*$
 ActionIndicator : ^★:<ActionIndicator:\s*.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*>\s*$
 
 //Script
-plugin : ^★:(?!console\.log|BattleManager|PA_INIT|D_TEXT|実績|Show_Animation|skt_|<フォグ|cmd|( {0,20})//|<namePop:|%&%>|<ActionIndicator:).*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
+plugin : ^★:(?!console\.log|BattleManager|PA_INIT|skit|\$game|this\.|D_TEXT|実績|Show_Animation|skt_|<フォグ|cmd|( {0,20})//|<namePop:|%&%>|<ActionIndicator:).*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
 Battlelog : ^★:BattleManager.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
 D_TEXT : ^★:D_TEXT.*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F].*$
 
