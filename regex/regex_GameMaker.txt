@@ -1,0 +1,9 @@
+CURRENT_VERSION = 2024-09-05
+
+global.japanese : \(global\.japanese \? (?!.*array\()[^)]*([\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F]+[^)]*)\)
+array2 : array\(([^()]*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F][^)]*)\)
+messages : messages\s*=\s*\[(.*?[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F][^\]]*)\](?!.*\])
+
+
+//array1 : array\(\((?:[^()]*|\([^()]*\))*[\u3040-\u30FF\u4E00-\u9FFF\uFF61-\uFF9F][^)]*\)\)
+-중간에 끊기는거 막으려면 필요하긴 한데 문제가 좀 많음
