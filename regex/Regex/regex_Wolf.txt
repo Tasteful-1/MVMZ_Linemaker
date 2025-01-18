@@ -1,3 +1,0 @@
-CURRENT_VERSION = 2025-01-01
-
-txt_raw_modified : ^(?!.*\.(png|jpg|mps|wav|ogg|ogv|csv|txt|mp3|mp4|sav|net|exe)(\[::\]|$)).+$
