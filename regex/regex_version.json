@@ -5,42 +5,46 @@
 	},
 	"KIRIKIRI2": {
 		"latest_version": "2024-12-09",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_KIRIKIRI2.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_KIRIKIRI2.txt"
 	},
 	"TYRANO": {
 		"latest_version": "2024-11-27",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_TYRANO.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_TYRANO.txt"
 	},
 	"MVMZ_ALL": {
-		"latest_version": "2024-08-23",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-ALL.txt"
+		"latest_version": "2024-12-23",
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_MVMZ-ALL.txt"
 	},
 	"MVMZ_JP": {
-		"latest_version": "2025-01-01",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-JP.txt"
+		"latest_version": "2025-01-18",
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_MVMZ-JP.txt"
 	},
 	"MVMZ-MT": {
 		"latest_version": "2024-12-30",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_MVMZ-MT.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_MVMZ-MT.txt"
 	},
 	"VXVXA": {
 		"latest_version": "2024-12-17",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_VXVXA.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_VXVXA.txt"
 	},
 	"Wolf": {
 		"latest_version": "2025-01-01",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_Wolf.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_Wolf.txt"
 	},
 	"PGMMV": {
 		"latest_version": "2024-10-03",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_PGMMV.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_PGMMV.txt"
 	},
 	"GameMaker": {
 		"latest_version": "2024-09-05",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_GameMaker.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_GameMaker.txt"
+	},
+	"LiveMaker": {
+		"latest_version": "2025-01-01",
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_LIGHTVN.txt"
 	},
 	"LIGHTVN": {
 		"latest_version": "2024-12-23",
-		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/Regex/regex_LIGHTVN.txt"
+		"regex_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/blob/Export_rengex/regex/regex_LIGHTVN.txt"
 	}
 }
