@@ -1,265 +1,384 @@
-#########################################################################################
-# RPG MAKER MV & MZ Line Maker_Private_resource
-# 작성 : tasteful
-# json 파일을 깔끔하게 정리해줍니다.
-# 이 코드는 타인의 사용을 고려하지 않았습니다.
-# 수정 및 개선, 재배포는 자유롭게 하셔도 좋습니다.
-#
-# URL : https://github.com/Tasteful-1/MVMZ_Linemaker
-#########################################################################################
-
 import os
 import re
 import sys
-import requests
-import tkinter as tk
-from tkinter import messagebox
+import json
 import traceback
 
-# 현재 프로그램 버전
-CURRENT_VERSION = "2.6.6"
+class MVMZLineMaker:
 
-# 현재 스크립트의 디렉토리 경로 얻기
-current_dir = os.path.dirname(os.path.abspath(__file__))
+#========초기화========#
 
-# 데이터 폴더 및 js/plugins.js 파일 경로 설정
-data_folder_path = os.path.join(current_dir, '..//..//Ex_Main//data')
-system_file_path = os.path.join(current_dir, '..//..//Ex_Main//data', 'system.json')
-js_folder_path = os.path.join(current_dir, '..//..//Ex_Main//js', 'plugins.js')
+    def __init__(self):
+        self.CURRENT_VERSION = "3.0.0"
+        self.current_dir = os.path.dirname(os.path.abspath(__file__))
+        #self.current_dir = os.path.dirname(sys.executable)
+        self.data_folder_path = os.path.join(self.current_dir, 'data')
+        self.system_file_path = os.path.join(self.current_dir, 'data', 'system.json')
+        self.js_folder_path = os.path.join(self.current_dir, 'js', 'plugins.js')
 
-# 서버에서 업데이트 정보 확인
-def check_for_update():
-	update_info_url = "https://raw.githubusercontent.com/Tasteful-1/MVMZ_Linemaker/refs/heads/main/update_info.json"
-	try:
-		response = requests.get(update_info_url)
-		response.raise_for_status()
-		update_info = response.json()
+        # 진행 상황 관리를 위한 카운터 추가
+        self.total_files = 0
+        self.processed_files = 0
 
-		latest_version = update_info["latest_version"]
-		download_url = update_info["download_url"]
-		changelog = update_info.get("changelog", "변경 사항 없음.")
+        # 처리 대상 파일 패턴 정의
+        self.target_files = {
+            'Actors.json', 'Armors.json', 'Classes.json', 'CommonEvents.json',
+            'Enemies.json', 'Items.json', 'MapInfos.json', 'Skills.json',
+            'States.json', 'System.json', 'Troops.json', 'Weapons.json'
+        }
+        # Map001.json ~ Map999.json 패턴 컴파일
+        self.map_pattern = re.compile(r'Map\d{3}\.json$')
 
-		if latest_version > CURRENT_VERSION:
-			# 업데이트 알림 팝업 표시
-			message = (
-				f"업데이트가 존재합니다!\n\n"
-				f"현재 버전: {CURRENT_VERSION}\n"
-				f"최신 버전: {latest_version}\n\n"
-				f"변경 사항:\n{changelog}\n\n"
-				"업데이트를 다운로드하시겠습니까?"
-			)
-			choice = tk.messagebox.askyesno("업데이트 확인", message)  # 예/아니오 팝업
-			if choice:
-				download_update(download_url)  # 예를 선택한 경우 업데이트 다운로드
-			else:
-				print("업데이트를 건너뜁니다.")
-	except Exception as e:
-		tk.messagebox.showerror("업데이트 오류", f"업데이트 확인 중 오류 발생: {e}")
+        print(f"MVMZLineMaker 시작 (버전: {self.CURRENT_VERSION})")
 
-# 업데이트 다운로드 및 실행
-def download_update(download_url):
-	try:
-		# 저장 디렉토리 설정
-		save_dir = current_dir
-		os.makedirs(save_dir, exist_ok=True)  # 디렉토리가 없으면 생성
+        print("=" * 50)
 
-		# 파일 이름과 경로 설정
-		file_name = download_url.split("/")[-1]
-		file_path = os.path.join(save_dir, file_name)
-		print(f"{file_name} 다운로드 중...")
-		response = requests.get(download_url, stream=True)
-		with open(file_name, "wb") as file:
-			for chunk in response.iter_content(chunk_size=8192):
-				file.write(chunk)
-		print(f"다운로드 완료: {file_name}")
-		print(f"갱신된 파일로 재실행 해주십시오")
-		sys.exit()  # 업데이트 후 프로그램 종료
-	except Exception as e:
-		print(f"업데이트 다운로드 중 오류 발생: {e}")
+        if os.path.isdir(self.data_folder_path):
+            print(f"데이터 폴더 확인 완료")
+        else:
+            print(f"데이터 폴더를 찾을 수 없음")
+        if os.path.isfile(self.system_file_path):
+            print(f"시스템 파일 확인 완료")
+        else:
+            print(f"시스템 파일을 찾을 수 없음")
+        if os.path.isfile(self.js_folder_path):
+            print(f"플러그인    확인 완료")
+        else:
+            print(f"플러그인 파일을 찾을 수 없음")
+
+        print("=" * 50)
+
+        #print(f"데이터 폴더 경로: {self.data_folder_path}")
+        #print(f"시스템 파일 경로: {self.system_file_path}")
+        #print(f"플러그인 파일 경로: {self.js_folder_path}")
+
+#========초기화========#
+#
+#========파일처리========#
+
+    def is_target_file(self, filename):
+        """처리 대상 파일인지 확인"""
+        return (filename in self.target_files or
+                bool(self.map_pattern.match(filename)))
+
+    def process_files(self):
+
+        self.total_files = 0
+        self.processed_files = 0
+        error_files = 0
+        failed_files = []
+
+        try:
+            # 데이터 폴더 내 대상 파일 필터링
+            if not os.path.isdir(self.data_folder_path):
+                print(f"데이터 폴더를 찾을 수 없음: {self.data_folder_path}")
+                return False
+
+            json_files = [f for f in os.listdir(self.data_folder_path)
+                        if f.endswith('.json') and self.is_target_file(f)]
+
+            # plugins.js 포함하여 총 파일 수 계산
+            self.total_files = len(json_files) + (1 if os.path.isfile(self.js_folder_path) else 0)
+
+            if self.total_files == 0:
+                print("처리할 파일이 없습니다.")
+                return False
+
+            # 데이터 폴더의 JSON 파일 처리
+            for filename in json_files:
+                try:
+                    file_path = os.path.join(self.data_folder_path, filename)
+                    self.modify_json_file(file_path)
+                    self._increment_progress()
+                    #print(f"파일 처리 완료: {filename}")
+                except Exception as e:
+                    error_files += 1
+                    failed_files.append(f"{filename}: {str(e)}")
+
+            # plugins.js 처리
+            if os.path.isfile(self.js_folder_path):
+                try:
+                    self.modify_js_file(self.js_folder_path)
+                    self._increment_progress()
+                    print("플러그인 처리 완료")
+                except Exception as e:
+                    error_files += 1
+                    failed_files.append(f"plugins.js: {str(e)}")
+                    print(f"플러그인 파일 처리 실패: {str(e)}")
+
+            # 성공 여부 판단
+            success = (self.processed_files == self.total_files)
+
+            print("=" * 50)
+            print(f"처리 완료 - 총 파일: {self.total_files}, "
+                            f"성공: {self.processed_files}, 실패: {error_files}")
+            print("=" * 50)
+            # 실패한 파일이 있으면 목록 출력
+            if error_files > 0:
+                print("\n실패한 파일 목록:")
+                for fail_info in failed_files:
+                    print(f"- {fail_info}")
+
+            return success
+
+        except Exception as e:
+            print(f"Line Maker 처리 중 오류 발생: {str(e)}")
+            return False
+
+    def modify_json_file(self, file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as file:
+                content = file.read()
+
+            # 새로운 포맷 함수 적용
+            modified_content = self.format_json_content(content)
+
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(modified_content)
+
+        except Exception as e:
+            raise
+
+    def format_json_content(self, content):
+        try:
+            # JSON 파싱
+            data = json.loads(content)
+            formatted_content = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+
+            # 포맷팅 규칙 정의
+            format_rules = [
+                # 기본 구조 처리
+                (r'null,\{"id"', r'null,\n{"id"'),
+
+                # 공통 패턴 처리
+                (r'("switchId":\d+,"trigger":\d+)\},(\{"id":)', r'\1},\n\2'),
+                (r'("type":\d+,"variance":\d+)\},(\{"id":)', r'\1},\n\2'),
+                (r'\],"learnings":', r'],\n"learnings":'),
+                (r'\],"hitType":', r'],\n"hitType":'),
+                (r'\],"iconIndex":', r'],\n"iconIndex":'),
+                (r'\],"gold":', r'],\n"gold":'),
+
+                # 개체별 처리
+                # Actors
+                (r'"note":"([^"]*)","profile":"([^"]*)"},{"id":', r'"note":"\1","profile":"\2"},\n{"id":'),
+                # Classes
+                (r'(\d+\]\]\}),\{"id"', r'\1,\n{"id"'),
+                # Items
+                (r'("successRate":\d+,"tpGain":\d+)\},(\{"id":)', r'\1},\n\2'),
+                # Skills
+                (r'("tpCost":\d+,"tpGain":\d+,"messageType":\d+)\},(\{"id":)', r'\1},\n\2'),
+                (r'("tpCost":\d+,"tpGain":\d+)\},(\{"id":)', r'\1},\n\2'),
+                # Armor
+                (r'("price":\d+)\},(\{"id":)', r'\1},\n\2'),
+                # Weapons
+                (r'("price":\d+,"wtypeId":\d+)\},(\{"id":)', r'\1},\n\2'),
+                # Enemies
+                (r'("params":\[\d+(?:,\d+)*\])\},(\{"id":)', r'\1},\n\2'),
+                # Troops
+                (r'("span":\d+)\}\]\},(\{"id":)', r'\1}]},\n\2'),
+                # States
+                (r'("messageType":\d+)\},(\{"id":)', r'\1},\n\2'),
+                (r'("traits":\[[^\]\[{}]*(?:\{[^{}]*\}[^\]\[{}]*)*\](?:,"[^"]*":[^{}\[\]]*)*)\},(\{"id":)', r'\1},\n\2'),
+                (r'("value":-?\d*\.?\d*)\}\]\},(\{"id":)', r'\1}]},\n\2'),
+                # MapInfos
+                (r'("scrollX":-?\d*\.?\d*,"scrollY":-?\d*\.?\d*,"quick":(true|false))\},(\{"id":)', r'\1},\n\3'),
+                (r'("scrollX":-?\d*\.?\d*,"scrollY":-?\d*\.?\d*)\},(\{"id":)', r'\1},\n\2'),
+                (r'("scrollX":-?\d*\.?\d*,"scrollY":-?\d*\.?\d*)\},(null)', r'\1},\n\2'),
+                # Maps 처리
+                (r'("tilesetId":\d+,"width":\d+,)("data":)', r'\1\n\2'),
+                (r'("x":\d+,"y":\d+)\},(\{"id":)', r'\1},\n\2'),
+
+                # list 배열 시작 부분
+                (r'("list":\[)(?!\n)', r'\1\n'),
+
+                # code 205 특별 처리
+                (r'([^\n])(\{"code":205,)', r'\1\n\2'),
+            ]
+
+            # 모든 규칙 적용
+            result = formatted_content
+            for pattern, replacement in format_rules:
+                result = re.sub(pattern, replacement, result)
+
+            # code 객체 처리 - 복잡한 패턴은 별도 함수로
+            result = self._process_code_objects(result)
+
+            # 중복 줄바꿈 정리
+            result = re.sub(r'\n\s*\n', '\n', result)
+
+            # System 처리
+            system_rules = [
+                (r'("startX":\d+,"startY":\d+,)("switches":)', r'\1\n\n\2'),
+                (r'("\],)("terms":)', r'\1\n\n\2'),
+                (r'\},("variables":)', r'},\n\n\1'),
+                (r'("\],)("versionId":)', r'\1\n\n\2'),
+            ]
+
+            # System 규칙 적용
+            for pattern, replacement in system_rules:
+                result = re.sub(pattern, replacement, result)
+
+            return result
+
+        except Exception as e:
+            raise
+
+    def _process_code_objects(self, text):
+        """code 객체 관련 포맷팅을 처리하는 함수"""
+        def replace_code_objects(match):
+            full_match = match.group(0)
+
+            # moveRoute나 list 배열 내부 제외
+            if '"moveRoute":{"list":[' in full_match:
+                return full_match
+
+            # code 객체 줄바꿈 처리
+            parts = full_match.split('{"code":')
+            processed = []
+            for i, part in enumerate(parts):
+                if i == 0:
+                    processed.append(part.rstrip())
+                else:
+                    processed.append('\n{"code":' + part)
+
+            return ''.join(processed)
+
+        # 연속된 code 객체들을 찾아서 처리
+        pattern = r'((?:{"code":.*?}(?:,\s*)?)+)'
+        return re.sub(pattern, replace_code_objects, text)
+
+    def modify_js_file(self, file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as file:
+                content = file.read()
+
+            # 간단 포맷팅 예외 처리
+            def apply_visumz_formatting(content):
+                """VisuMZ 플러그인 포맷팅 처리"""
+                print("간단한 포맷팅 적용")
+                patterns_and_replacements = [
+                    ('","', '",\n"'),
+                    ('},{', '},\n{'),
+                    ('},\n{"name', '\n},\n\n{"name'),
+                    (',"description"', ',\n"description"'),
+                    ('"parameters":{', '"parameters":{\n')
+                ]
+                modified_content = content
+                for pattern, replacement in patterns_and_replacements:
+                    modified_content = re.sub(pattern, replacement, modified_content)
+
+                with open(file_path, 'w', encoding='utf-8') as file:
+                    file.write(modified_content)
+
+                print("간단 포맷팅 완료")
+
+            if "VisuMZ" in content:
+                apply_visumz_formatting(content)
+                return
+
+            pattern = r'(?://[^\n]*\n)*\s*var\s+\$plugins\s*=\s*(\[.*?\]);'
+            match = re.search(pattern, content, re.DOTALL)
+            if not match:
+                raise ValueError("plugins 배열을 찾을 수 없습니다.")
+
+            start_pos = match.start()
+            end_pos = match.end()
+
+            plugins_str = match.group(1)
+            plugins = json.loads(plugins_str)
+
+            def format_parameters(params):
+                """parameters 객체를 보기 좋게 포맷팅하면서 이스케이프 문자 유지"""
+                if not params:  # 빈 객체인 경우
+                    return "{}"
+
+                lines = []
+                items = list(params.items())
+                for i, (key, value) in enumerate(items):
+                    if isinstance(value, str):
+                        try:
+                            # JSON 문자열인지 확인
+                            json.loads(value)
+                            # JSON 문자열이면 원본 형태 그대로 유지
+                            escaped_value = json.dumps(value, ensure_ascii=False)
+                            lines.append(f'"{key}":{escaped_value}')
+                        except json.JSONDecodeError:
+                            # 일반 문자열이면 그냥 처리
+                            lines.append(f'"{key}":{json.dumps(value, ensure_ascii=False)}')
+                    else:
+                        # 일반 값은 JSON 덤프
+                        lines.append(f'"{key}":{json.dumps(value, ensure_ascii=False, separators=(",", ":"))}')
+
+                return "{\n" + ",\n".join(lines) + "\n}"
+
+            def format_plugin(plugin):
+                """플러그인 객체를 포맷팅"""
+                formatted_plugin = {}
+                for key, value in plugin.items():
+                    if key == 'description':
+                        formatted_plugin[key] = ' '.join(line.strip() for line in value.splitlines() if line.strip())
+                    else:
+                        formatted_plugin[key] = value
+
+                lines = []
+                for i, (key, value) in enumerate(formatted_plugin.items()):
+                    if key == 'parameters':
+                        # parameters는 특별한 포맷팅 적용
+                        line = f'"parameters":{format_parameters(value)}'
+                    else:
+                        line = f'"{key}":{json.dumps(value, ensure_ascii=False)}'
+
+                    if i < len(formatted_plugin) - 1:
+                        line += ','
+                    lines.append(line)
+
+                return "{" + "\n".join(lines) + "\n}"
+
+            formatted_plugins = []
+            for i, plugin in enumerate(plugins):
+                plugin_str = format_plugin(plugin)
+                if i < len(plugins) - 1:
+                    plugin_str += ','
+                formatted_plugins.append(plugin_str)
+
+            plugins_formatted = "// Generated by RPG Maker.\n"
+            plugins_formatted += "// Do not edit this file directly.\n"
+            plugins_formatted += "var $plugins =\n[\n"
+            plugins_formatted += "\n".join(formatted_plugins)
+            plugins_formatted += "\n];"
+
+            modified_content = content[:start_pos] + plugins_formatted + content[end_pos:]
+
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(modified_content)
+
+        except Exception as e:
+            print(f"파일 처리 중 오류 발생: {file_path}")
+            print(traceback.format_exc())
+            # 오류 발생 시 간단 처리 방식 적용
+            apply_visumz_formatting(content)
+
+#========파일처리========#
+#
+#========진행상황관리========#
+
+    def _increment_progress(self):
+        """진행률 증가 및 보고 - 10% 단위로만 표시"""
+        self.processed_files += 1
+        if self.total_files > 0:
+            current_progress = (self.processed_files / self.total_files) * 100
+            current_tenth = int(current_progress / 10)
+            previous_tenth = int(((self.processed_files - 1) / self.total_files * 100) / 10)
+
+            if current_tenth != previous_tenth:
+                print(f"[줄정리]진행률: {current_tenth * 10}% ({self.processed_files}/{self.total_files})")
+
+#========진행상황관리========#
+
+    def main(self):
+        """메인 함수"""
+        self.process_files()
+        input("\n엔터 키를 누르면 종료됩니다...")
 
 if __name__ == "__main__":
-	check_for_update()
-
-def show_popup(title, message):
-	# 팝업 메시지 표시
-	messagebox.showinfo(title, message)
-
-def modify_file(file_path, modifications, exclusions=None, max_passes=10):
-	if exclusions is None:
-		exclusions = []
-
-	try:
-		with open(file_path, 'r', encoding='utf-8') as file:
-			content = file.read()
-
-		modified_content = content
-		for _ in range(max_passes):
-			previous_content = modified_content
-
-			# 제외 패턴을 찾아 제외 부분은 그대로 유지하고 나머지 부분만 수정
-			excluded_sections = []
-			last_end = 0
-			for match in re.finditer(f"({'|'.join(exclusions)})", modified_content):
-				start, end = match.span()
-				# 제외 패턴 앞부분은 수정 대상으로 저장
-				excluded_sections.append((modified_content[last_end:start], False))
-				# 제외 패턴 부분은 그대로 저장
-				excluded_sections.append((modified_content[start:end], True))
-				last_end = end
-			# 마지막 부분 추가
-			excluded_sections.append((modified_content[last_end:], False))
-
-			# 수정 대상 부분만 수정 적용
-			modified_content = ""
-			for text, is_excluded in excluded_sections:
-				if not is_excluded:
-					for old_str, new_str in modifications:
-						text = text.replace(old_str, new_str)
-				modified_content += text
-
-			if previous_content == modified_content:
-				break
-
-		with open(file_path, 'w', encoding='utf-8') as file:
-			file.write(modified_content)
-		print(f"Modified file: {file_path}")
-
-	except Exception as e:
-		error_message = f"오류 발생 {file_path}: {e}"
-		print(error_message)
-		traceback.print_exc()
-		print("오류 발생", error_message)
-
-#선처리1
-data_modifications1 = [
-	('namepop  ', 'namepop_ζε'),
-	('    ', ''),
-	('   ', ''),
-	('  ', ''),
-	('\n', ''),
-	('{ "','{"'),
-	(', "',',"'),
-	(' ]}',']}'),
-	(', {',',{'),
-	(' \\\\C[','\\\\C['),
-	('namepop_ζε','namepop  '),
-]
-
-#선처리2
-data_modifications2 = [
-	('\n', ''),
-	('\t', ''),
-	('" ', '"'),
-	(' : ', '￥★￥'),
-	(': ',':'),
-]
-
-#메인
-data_modifications3 = [
-	('"[null,', '"[널,'),
-	('null]"]},', '널]"]},'),
-	('},{"id', '},\n{"id'),
-	('},{"code', '},\n{"code'),
-	(',"list": [{"code"', ',"list": [\n{"code"'),
-	(',"list":[{"code"', ',"list":[\n{"code"'),
-	(',{"list":[{"code"', ',{"list":[\n{"code"'),
-	('{"autoplayBgm"', '{\n"autoplayBgm"'),
-	(',"data":[', ',\n"data":['),
-	('],"events":[', '],\n"events":['),
-	('"events":[null,', '"events":[\nnull,'),
-	('null,{"id"', 'null,\n{"id"'),
-	('},null', '},\nnull'),
-	('null]', 'null\n]'),
-	('[null,{"id":1', '[\nnull,\n{"id":1'),
-	('[null,', '[\nnull,'),
-	('[null\n]', '[\nnull\n]'),
-]
-
-#후처리
-data_modifications4 = [
-	('}\n]\n}', '}]}'),
-	('null\n]\n}', 'null]}'),
-	('"events":[\n]\n}', '"events":[]'),
- 	('"[널,', '"[null,'),
- 	('널]"]},', 'null]"]},'),
-	('￥★￥', ' : '),
-	('[6,null\n]', '[6,null]'),
-]
-
-js_modifications1 = [
-	('    ', ''),
-	('   ', ''),
-	('  ', ''),
-	('\n', ''),
-	('\t', ''),
-	('" ', '"'),
-	('{ "','{"'),
-	(', "',',"'),
-	(' ]}',']}'),
-	(' {','{'),
-	(' \\\\C[','\\\\C[')
-]
-
-js_modifications2 = [
-	('var $plugins = [{"name"', '// Generated by RPG Maker.\n// Do not edit this file directly.\nvar $plugins =\n[\n{"name"'),
-	('var $plugins =[{"name"', '// Generated by RPG Maker.\n// Do not edit this file directly.\nvar $plugins =\n[\n{"name"'),
-	('// Generated by RPG Maker.// Do not edit this file directly.// Generated by RPG Maker.\n// Do not edit this file directly.', '// Generated by RPG Maker.\n// Do not edit this file directly.'),
-	('},{"name', '},\n\n{"name'),
-	('","parameters":', '",\n"parameters":\n'),
-	('","', '",\n"'),
-	('}}];', '}}\n];'),
-	('": ', '":'),
-]
-
-system_modification = [
-	(',"switches":[',',\n\n"switches":['),
-	('],"terms":','],\n\n"terms":'),
-	('},"variables":[','},\n\n"variables":['),
-	('],"versionId"','],\n\n"versionId"'),
-]
-
-# 제외할 패턴 예시
-exclusions1 = [
-	r'<(?![^>]*/>)[a-zA-Z][^>]*>',
-	r'\[\"[^\"]*\"\]',
-	r',\"[^\"]*\",',
-	r'"note":\s*"([^"]*?)"',
-	r'"name":\s*"([^"]*?)"',
-	r'"characterName":\s*"([^"]*?)"',
-	r'"battlerName":\s*"([^"]*?)"',
-	r'"battleback1Name":\s*"([^"]*?)"',
-	r'"battleback2Name":\s*"([^"]*?)"',
-	r'"description":\s*"([^"]*?)"',
-	r':\d+,"indent":\d+,"parameters":\[((?:\[(?:"[^"]*"(?:\s*,\s*)*)*\]|"[^"]*"|\d+)(?:\s*,\s*)*)+\]',
-]  # 여기에서 제외할 패턴을 정규식으로 추가
-
-# 제외할 패턴 예시
-exclusions2 = [r'<[^>]*?(?=>|"\]\})']  # 여기에서 제외할 패턴을 정규식으로 추가
-exclusions3 = [r'ι']  # 여기에서 제외할 패턴을 정규식으로 추가
-
-# 데이터 폴더가 존재하는지 확인
-if not os.path.isdir(data_folder_path):
-	print("디렉토리 찾기 오류", "data 폴더를 찾을 수 없습니다.")
-else:
-	for folder_path, _, filenames in os.walk(data_folder_path):
-		for filename in filenames:
-			if filename.endswith('.json'):
-				file_path = os.path.join(folder_path, filename)
-				modify_file(file_path, data_modifications1 + data_modifications2 + data_modifications3 + data_modifications4, exclusions=exclusions1)
-
-# 시스템파일이 존재하는지 확인
-if not os.path.isfile(system_file_path):
-	print("디렉토리 찾기 오류", "system.json 을 찾을 수 없습니다.")
-else:
-	modify_file(system_file_path, system_modification, exclusions=exclusions2)
-
-# js/plugins.js 파일이 존재하는지 확인
-if not os.path.isfile(js_folder_path):
-	print("파일 찾기 오류", "js/plugins.js 파일을 찾을 수 없습니다.")
-else:
-	modify_file(js_folder_path, js_modifications1 + js_modifications2, exclusions=exclusions3)
-
-# tkinter 루프 실행
-#root = tk.Tk()
-#root.withdraw()  # 기본 윈도우 숨기기
-#show_popup("완료", "작업이 종료되었습니다.")
+    MVMZLineMaker.main(self=MVMZLineMaker())
