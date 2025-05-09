@@ -1,5 +1,5 @@
 {
-  "latest_version": "3.0.0",
-  "download_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/releases/download/3.0.0/MVMZLineMaker_SA_V3.0.0.exe",
-  "changelog": "동작 방식을 리빌드."
+  "latest_version": "3.0.1",
+  "download_url": "https://github.com/Tasteful-1/MVMZ_Linemaker/releases/download/3.0.1/MVMZLineMaker_SA_V3.0.1.exe",
+  "changelog": "처리 대상을 확장."
 }
