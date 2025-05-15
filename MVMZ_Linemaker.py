@@ -9,7 +9,7 @@ class MVMZLineMaker:
 #========초기화========#
 
     def __init__(self):
-        self.CURRENT_VERSION = "3.0.1"
+        self.CURRENT_VERSION = "3.0.2"
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
         #self.current_dir = os.path.dirname(sys.executable)
         self.data_folder_path = os.path.join(self.current_dir, 'data')
@@ -183,6 +183,8 @@ class MVMZLineMaker:
                 (r'(\d+\]\]\}),\{"id"', r'\1,\n{"id"'),
                 # Items
                 (r'("successRate":\d+,"tpGain":\d+)\},(\{"id":)', r'\1},\n\2'),
+                (r'("type":\d+,"variance":\d+)\}\},(\{"id":)', r'\1}},\n\2'),
+                (r'("type":"","variance":"")\}\},(\{"id":)', r'\1}},\n\2'),
                 # Skills
                 (r'("tpCost":\d+,"tpGain":\d+,"messageType":\d+)\},(\{"id":)', r'\1},\n\2'),
                 (r'("tpCost":\d+,"tpGain":\d+)\},(\{"id":)', r'\1},\n\2'),
@@ -279,7 +281,8 @@ class MVMZLineMaker:
                     ('},{', '},\n{'),
                     ('},\n{"name', '\n},\n\n{"name'),
                     (',"description"', ',\n"description"'),
-                    ('"parameters":{', '"parameters":{\n')
+                    ('"parameters":{', '"parameters":{\n'),
+                    ('\n\n', '\n')
                 ]
                 modified_content = content
                 for pattern, replacement in patterns_and_replacements:
@@ -313,19 +316,25 @@ class MVMZLineMaker:
                 lines = []
                 items = list(params.items())
                 for i, (key, value) in enumerate(items):
+                    # 백슬래시 키 처리 - \AT[n] 패턴 감지 및 처리
+                    if key.startswith('\\AT[') and key.endswith(']'):
+                        escaped_key = f'"\\\\{key[1:]}"'  # 백슬래시 추가 이스케이프
+                    else:
+                        escaped_key = json.dumps(key, ensure_ascii=False)
+
                     if isinstance(value, str):
                         try:
                             # JSON 문자열인지 확인
                             json.loads(value)
                             # JSON 문자열이면 원본 형태 그대로 유지
                             escaped_value = json.dumps(value, ensure_ascii=False)
-                            lines.append(f'"{key}":{escaped_value}')
+                            lines.append(f'{escaped_key}:{escaped_value}')
                         except json.JSONDecodeError:
                             # 일반 문자열이면 그냥 처리
-                            lines.append(f'"{key}":{json.dumps(value, ensure_ascii=False)}')
+                            lines.append(f'{escaped_key}:{json.dumps(value, ensure_ascii=False)}')
                     else:
                         # 일반 값은 JSON 덤프
-                        lines.append(f'"{key}":{json.dumps(value, ensure_ascii=False, separators=(",", ":"))}')
+                        lines.append(f'{escaped_key}:{json.dumps(value, ensure_ascii=False, separators=(",", ":"))}')
 
                 return "{\n" + ",\n".join(lines) + "\n}"
 
