@@ -9,7 +9,7 @@ class MVMZLineMaker:
 #========초기화========#
 
     def __init__(self):
-        self.CURRENT_VERSION = "3.0.2"
+        self.CURRENT_VERSION = "3.0.3"
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
         #self.current_dir = os.path.dirname(sys.executable)
         self.data_folder_path = os.path.join(self.current_dir, 'data')
@@ -188,6 +188,7 @@ class MVMZLineMaker:
                 # Skills
                 (r'("tpCost":\d+,"tpGain":\d+,"messageType":\d+)\},(\{"id":)', r'\1},\n\2'),
                 (r'("tpCost":\d+,"tpGain":\d+)\},(\{"id":)', r'\1},\n\2'),
+                #"type":1,"variance":0},"message1":""},
                 # Armor
                 (r'("price":\d+)\},(\{"id":)', r'\1},\n\2'),
                 # Weapons
@@ -293,20 +294,66 @@ class MVMZLineMaker:
 
                 print("간단 포맷팅 완료")
 
-            if "VisuMZ" in content:
+            # if "VisuMZ" in content:
+            #     apply_visumz_formatting(content)
+            #     return
+
+            # 더 견고한 plugins 배열 추출 방법
+            def extract_plugins_array(content):
+                """plugins 배열을 안전하게 추출"""
+                pattern = r'(?://[^\n]*\n)*\s*var\s+\$plugins\s*=\s*'
+                match = re.search(pattern, content)
+                if not match:
+                    return None, None, None
+
+                start_pos = match.end()
+
+                # 배열 시작 찾기
+                bracket_start = content.find('[', start_pos)
+                if bracket_start == -1:
+                    return None, None, None
+
+                # 균형 잡힌 괄호로 배열 끝 찾기
+                bracket_count = 0
+                i = bracket_start
+                while i < len(content):
+                    if content[i] == '[':
+                        bracket_count += 1
+                    elif content[i] == ']':
+                        bracket_count -= 1
+                        if bracket_count == 0:
+                            break
+                    i += 1
+
+                if bracket_count != 0:
+                    return None, None, None
+
+                # 세미콜론까지 포함
+                end_pos = content.find(';', i)
+                if end_pos == -1:
+                    end_pos = i + 1
+                else:
+                    end_pos += 1
+
+                plugins_str = content[bracket_start:i+1]
+                full_start = match.start()
+
+                return plugins_str, full_start, end_pos
+
+            plugins_str, start_pos, end_pos = extract_plugins_array(content)
+            if not plugins_str:
+                print("plugins 배열을 찾을 수 없습니다. 간단 포맷팅을 적용합니다.")
                 apply_visumz_formatting(content)
                 return
 
-            pattern = r'(?://[^\n]*\n)*\s*var\s+\$plugins\s*=\s*(\[.*?\]);'
-            match = re.search(pattern, content, re.DOTALL)
-            if not match:
-                raise ValueError("plugins 배열을 찾을 수 없습니다.")
-
-            start_pos = match.start()
-            end_pos = match.end()
-
-            plugins_str = match.group(1)
-            plugins = json.loads(plugins_str)
+            # JSON 파싱 시도
+            try:
+                plugins = json.loads(plugins_str)
+            except json.JSONDecodeError as e:
+                print(f"JSON 파싱 실패: {e}")
+                print("복잡한 구조로 인해 간단 포맷팅을 적용합니다.")
+                apply_visumz_formatting(content)
+                return
 
             def format_parameters(params):
                 """parameters 객체를 보기 좋게 포맷팅하면서 이스케이프 문자 유지"""
