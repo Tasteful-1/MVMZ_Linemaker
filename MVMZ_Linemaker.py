@@ -9,7 +9,7 @@ class MVMZLineMaker:
 #========초기화========#
 
     def __init__(self):
-        self.CURRENT_VERSION = "3.0.3"
+        self.CURRENT_VERSION = "3.0.4"
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
         #self.current_dir = os.path.dirname(sys.executable)
         self.data_folder_path = os.path.join(self.current_dir, 'data')
@@ -19,6 +19,7 @@ class MVMZLineMaker:
         # 진행 상황 관리를 위한 카운터 추가
         self.total_files = 0
         self.processed_files = 0
+        self.map_file_count = 0
 
         # 처리 대상 파일 패턴 정의
         self.file_patterns = [
@@ -34,6 +35,7 @@ class MVMZLineMaker:
             re.compile(r'System(_\d+)?\.json$'),
             re.compile(r'Troops(_\d+)?\.json$'),
             re.compile(r'Weapons(_\d+)?\.json$'),
+            re.compile(r'Scenario\.json'),
         ]
 
         # Map 파일 패턴 (Map001.json, Map313_2.json 등)
@@ -68,16 +70,27 @@ class MVMZLineMaker:
 
     def is_target_file(self, filename):
         """처리 대상 파일인지 확인"""
-        # Map 패턴 검사
-        if self.map_pattern.match(filename):
-            return True
 
         # 기타 파일 패턴 검사
         for pattern in self.file_patterns:
             if pattern.match(filename):
+                print(f"처리 대상 파일: {filename}")
                 return True
 
+        # Map 패턴 검사
+        if self.map_pattern.match(filename):
+            self.map_file_count += 1
+            return True
+
         return False
+
+    def _is_scenario_file(self, file_path):
+        """파일명으로 시나리오 파일인지 확인"""
+        if not file_path:
+            return False
+
+        filename = os.path.basename(file_path)
+        return filename == 'Scenario.json'
 
     def process_files(self):
 
@@ -94,6 +107,8 @@ class MVMZLineMaker:
 
             json_files = [f for f in os.listdir(self.data_folder_path)
                         if f.endswith('.json') and self.is_target_file(f)]
+            print(f"처리할 맵의 수: 총 {self.map_file_count} 개")
+            print("=" * 50)
 
             # plugins.js 포함하여 총 파일 수 계산
             self.total_files = len(json_files) + (1 if os.path.isfile(self.js_folder_path) else 0)
@@ -149,7 +164,7 @@ class MVMZLineMaker:
                 content = file.read()
 
             # 새로운 포맷 함수 적용
-            modified_content = self.format_json_content(content)
+            modified_content = self.format_json_content(content, file_path)
 
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(modified_content)
@@ -157,10 +172,33 @@ class MVMZLineMaker:
         except Exception as e:
             raise
 
-    def format_json_content(self, content):
+    def _format_scenario_content(self, data):
+        """시나리오 파일 전용 포맷팅"""
+        formatted_sections = []
+
+        for section_name, code_objects in data.items():
+            # 각 code 객체를 줄바꿈으로 분리
+            formatted_codes = []
+            for code_obj in code_objects:
+                code_str = json.dumps(code_obj, ensure_ascii=False, separators=(',', ':'))
+                formatted_codes.append(code_str)
+
+            # 섹션 포맷팅: "섹션이름":[\n{code객체들}\n]
+            section_str = f'"{section_name}":[\n' + ',\n'.join(formatted_codes) + ']'
+            formatted_sections.append(section_str)
+
+        # 전체 구조 조합
+        result = '{\n' + ',\n'.join(formatted_sections) + '}'
+        return result
+
+    def format_json_content(self, content, file_path=None):
         try:
             # JSON 파싱
             data = json.loads(content)
+
+            if self._is_scenario_file(file_path):
+                return self._format_scenario_content(data)
+
             formatted_content = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 
             # 포맷팅 규칙 정의
